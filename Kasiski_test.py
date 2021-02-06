@@ -1,5 +1,5 @@
 #Use Virtual Environment to run
-import matplotlib.pyplot as plt
+#from matplotlib import pyplot as plt
 #Getting Input
 input=input("Enter Encrypted Message: ")
 encrypted_message=input
@@ -106,5 +106,11 @@ for nums in final_differences:
 x=[]
 for i in range(40):
         x.append(i+1)
-plt.plot(x,factors_list)
-plt.show()
+x.pop(0)
+factors_list.pop(0)
+final_dict = {factors_list[i]: x[i] for i in range(len(x))}
+for i in sorted(factors_list)[::-1]:
+        print(final_dict[i], ": ", i)
+
+#plt.plot(x,factors_list)
+#plt.show()
