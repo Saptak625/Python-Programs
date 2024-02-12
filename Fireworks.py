@@ -26,8 +26,8 @@ class Particle():
         self.acc = acceleration
         self.color = color
         self.fade = fade
+        self.fadecolor = 1
         self.faded = False
-        self.fadecolor = 255
         self.size = size
 
     def updateParticle(self):
@@ -39,18 +39,13 @@ class Particle():
     def displayParticle(self):
         roundedPosition = [int(self.pos[0]), int(self.pos[1])]
         if self.fadecolor > 0:
-            finalcolor = [0, 0, 0]
-            if self.color == 4:
-                for i in range(3):
-                    finalcolor[i] = self.fadecolor
-            else:
-                finalcolor[self.color - 1] = self.fadecolor
+            finalcolor = [round(i * self.fadecolor) for i in self.color]
             pygame.draw.circle(alphaSurface, finalcolor,
                                roundedPosition, int(self.size - 1))
         else:
             self.faded = True
         if self.fade:
-            self.fadecolor -= 2
+            self.fadecolor -= 0.025
 
     def __repr__(self):
         return f'Particle:\n--->Position: {self.pos}\n--->Velocity: {self.vel}\n--->Acceleration: {self.acc}'
@@ -61,8 +56,13 @@ class Firework():
         self.particles = []
         self.exploded = False
         self.finished = False
-        self.mainParticle = Particle([random.randint(20, display_width - 20), display_height + random.randint(-10, 10)], [
-                                     0, random.randint(-12, -10)], [0, 0.1], random.randint(0, 4), 7, False)
+        color = []
+        total_color = 255 * 2 + 150
+        for i in range(2):
+            color.append(random.randint(200, 255))
+        color.append(min(total_color - color[0] - color[1], 255))
+        self.mainParticle = Particle([random.uniform(20, display_width - 20), display_height + random.uniform(-10, 10)], [
+                                     0, random.uniform(-12, -10)], [0, 0.1], color, 7, False)
 
     def updateFirework(self):
         if not self.exploded:
@@ -88,8 +88,9 @@ class Firework():
             if self.particles == []:
                 # Create random unit vectors
                 numOfParticles = 100
+                firework_size = random.choice([0.9, 0.95, 1, 1.25, 1.3, 1.8, 2.2])
                 for i in range(numOfParticles):
-                    randomScaler = random.randint(4, 7)
+                    randomScaler = random.uniform(3.5, 7) * firework_size
                     random_x = random.random()
                     random_x_Scaler = random.choice([1, -1])
                     random_y = math.sqrt(1 - (random_x)**2)
@@ -105,7 +106,7 @@ class Firework():
                 self.finished = True
 
 
-fireworks = [Firework() for i in range(10)]
+fireworks = [Firework() for i in range(30)]
 alphaSurface = pygame.Surface((display_width, display_height), pygame.SRCALPHA)
 gameDisplay.fill(black)
 while True:
@@ -118,7 +119,7 @@ while True:
         if firework.finished:
             fireworks[i] = Firework()
     chance = random.random()
-    if chance <= 0.01:
+    if chance <= 0.01 and len(fireworks) < 60:
         fireworks.append(Firework())
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
