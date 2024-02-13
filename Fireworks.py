@@ -2,11 +2,15 @@ import pygame
 import random
 import sys
 import math
+import tkinter
 
 pygame.init()
 
-display_width = 1800
-display_height = 800
+# Determine the display width and height of the screen
+root = tkinter.Tk()
+display_width = root.winfo_screenwidth()
+display_height = root.winfo_screenheight()
+root.destroy()
 
 black = (0, 0, 0)
 white = (255, 255, 255)
@@ -57,12 +61,13 @@ class Firework():
         self.exploded = False
         self.finished = False
         color = []
-        total_color = 255 * 2 + 150
+        total_color = 200 * 2 + 100
         for i in range(2):
-            color.append(random.randint(200, 255))
+            color.append(random.randint(0, 200))
         color.append(min(total_color - color[0] - color[1], 255))
-        self.mainParticle = Particle([random.uniform(20, display_width - 20), display_height + random.uniform(-10, 10)], [
-                                     0, random.uniform(-12, -10)], [0, 0.1], color, 7, False)
+        random.shuffle(color)
+        self.mainParticle = Particle([random.uniform(20, display_width - 20), display_height + random.uniform(-25, 25)], [
+                                     0, random.uniform(-14, -10)], [0, 0.1], color, 5, False)
 
     def updateFirework(self):
         if not self.exploded:
