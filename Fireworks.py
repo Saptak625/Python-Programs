@@ -24,7 +24,7 @@ FPS = 60
 
 
 class Particle():
-    def __init__(self, position, velocity, acceleration, color, size, fade):
+    def __init__(self, position, velocity, acceleration, color, size, fade, shrink):
         self.pos = position
         self.vel = velocity
         self.acc = acceleration
@@ -33,12 +33,14 @@ class Particle():
         self.fadecolor = 1
         self.faded = False
         self.size = size
+        self.shrink = shrink
 
     def updateParticle(self):
         self.vel[0] += self.acc[0]
         self.vel[1] += self.acc[1]
         self.pos[0] += self.vel[0]
         self.pos[1] += self.vel[1]
+        self.size = max(self.size - self.shrink, 0)
 
     def displayParticle(self):
         roundedPosition = [int(self.pos[0]), int(self.pos[1])]
@@ -67,7 +69,7 @@ class Firework():
         color.append(min(total_color - color[0] - color[1], 255))
         random.shuffle(color)
         self.mainParticle = Particle([random.uniform(20, display_width - 20), display_height + random.uniform(-25, 25)], [
-                                     0, random.uniform(-14, -10)], [0, 0.1], color, 5, False)
+                                     0, random.uniform(-14, -10)], [0, 0.1], color, 5, False, 0)
 
     def updateFirework(self):
         if not self.exploded:
@@ -101,7 +103,7 @@ class Firework():
                     random_y = math.sqrt(1 - (random_x)**2)
                     random_y_Scaler = random.choice([1, -1])
                     p = Particle(self.mainParticle.pos[:], [random_x * randomScaler * random_x_Scaler,
-                                                            random_y * randomScaler * random_y_Scaler], [0, 0.01], self.mainParticle.color, 4, True)
+                                                            random_y * randomScaler * random_y_Scaler], [0, 0.01], self.mainParticle.color, 4, True, 0.03)
                     self.particles.append(p)
             if not self.particles[0].faded:
                 for i in range(len(self.particles)):
